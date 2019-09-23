@@ -1,0 +1,135 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[top=1.5cm, bottom=4.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+\lstset{
+  frame=tb,
+  backgroundcolor=\color{gray!10},
+  inputencoding=utf8,
+  literate={ñ}{{\~n}}1 {í}{{\'i}}1,
+}
+\renewcommand{\lstlistingname}{Algoritmo}
+
+\newcommand\course{Análisis de Algoritmos}
+\newcommand\hwnumber{3}
+\newcommand\AStudentName{González Alvarado Raúl}
+\newcommand\AStudentID{313245312}
+
+\pagestyle{fancyplain}
+\headheight 35pt
+\lhead{\AStudentName\\\AStudentID}
+\rhead{\course \\ \today}
+\chead{\textbf{\Large Tarea \hwnumber}}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1cm
+
+\begin{document}
+  \begin{enumerate}[leftmargin=*]
+    \item Imagina que está un robot en la esquina superior izquierda de una malla de tamaño $X \times Y$. El robot solo puede moverse en dos direcciones: a la derecha y abajo. Si el robot debe moverse sobre la malla de la posición $(0,0)$ a la posición $(X,Y)$, \textbf{¿cuántos posibles caminos existen para mover al robot?} Imagina que ciertas celdas de la malla $(i,j)$ están bloqueadas, por lo que el robot no se puede para sobre ellas. \textbf{Diseña un algoritmo} de tiempo $O(XY)$ para encontrar el camino, si es que existe, que el robot debe seguir para llegar a la celda más abajo a la derecha.
+    \begin{enumerate}[label=\roman*)]
+      \item \textbf{Posibles caminos:} En el caso en que la malla no tenga ningún obstáculo, el robot tiene que realizar $X$ movimientos a la derecha y $Y$ movimientos hacia abajo, independientemente de la ruta que tome. Con esto obtenemos una permutación con repeticiones de $X$ veces 'derecha' y $Y$ veces 'abajo'. Por lo tanto la cantidad de posibles caminos sin obstáculos es igual a:
+      \[
+        \frac{(X+Y)!}{X! \ Y!} 
+      \]
+      
+      \item \textbf{Algoritmo para encontrar el camino:} El algoritmo consiste en ir recorriendo una matriz de tamaño $X*Y$, en la que en cada entrada de la matriz se va a representar una casilla de nuestro tablero y se va a ir guardando en cada casilla si es posible llegar a ella, además en caso de que sí, se almacenará desde donde se llegó (desde arriba o desde la izquierda) a dicha casilla. Una vez que se llena cada una de las casillas se recorre desde la casilla en la posición $(X,Y)$ siguiendo el camino en reversa que indica desde donde se llegó a esa casilla.
+      
+      \begin{lstlisting}[caption=Encontrar camino en matríz de $X\times Y$]
+  EncuentraCamino (X, Y) do
+    malla = [X*Y] // matríz de tamaño X * Y
+    for i=0 to X do
+      for j=0 to Y do
+        arriba = malla[i-1, j]
+        izquierda = malla[i, j-1]
+        // si es posible llegar a la casilla arriba
+        if arriba['posible'] then
+          malla[i, j] = ['posible': true, 'flecha': 'arriba']
+        else if izquierda['posible'] then
+          malla[i,j] = ['posible': true, 'flecha': 'izquierda']
+        else
+          malla[i,j] = ['posible': false, 'flecha': null]
+        endif
+      end_for_j
+    end_for_i
+    
+    if malla[X,Y]['posible'] then
+      camino = []
+      for i=X to 0 do
+        for j=Y to 0 do
+          celda = malla[X,Y]
+          if celda['flecha'] == 'arriba' then
+            camino.enqueue('abajo')
+          else
+            camino.enqueue('derecha')
+          endif
+        end_for_j
+      end_for_i
+      return camino
+    else
+      return null
+    endif
+  end_EncuentraCamino
+      \end{lstlisting}
+      
+      El algoritmo es correcto ya que para saber cómo llegar a una casilla $(i,j)$ debe tomar en cuenta cómo se puede llegar a las casillas de arriba o de la izquierda por que son los únicos lados de los que pudo haber llegado a dicha casilla.
+    \end{enumerate}
+    
+    \newcommand\stylePoint{\textit{style point}}
+    \newcommand\stylePoints{\textit{style points}}
+    \item \textit{Dance Dance Revolution} es un videojuego de baile que fue introducido por primera vez en Japón por Konami en el año de 1998. Los jugadores se paran sobre una plataforma que está marcada con cuatro flechas, apuntando hacia arriba, abajo, al lado derecho y al izquierdo y ordenadas en un patrón en forma de cruz. Durante una partida se escucha una canción y el juego muestra una secuencia de flechas ($\leftarrow$, $\uparrow$, $\downarrow$ ó $\rightarrow$) que se van desplazando desde abajo de la pantalla hasta arriba. En el momento justo en que alcanzan la parte superior de la pantalla, el jugador debe pararse en la flecha correspondiente de la plataforma de baile (las flechas están sincronizadas para que te tengas que posicionar en ellas de acuerdo con el ritmo de la canción). Tú estás jugando una variante del juego llamada Vogu Vogue Revolution en donde la meta es jugar perfectamente, pero moverte lo menos posible. Cuando una flecha alcanza el tope de la pantalla, si uno de tus pies está ya en la flecha correcta, entonces ganas un \stylePoint\ por mantener la misma pose. So ninguno de tus dos pies está en la flecha adecuada, entonces debes mover uno y solamente uno de tus pies del lugar donde se encuentra actualmente a la posición correcta de la plataforma. Si en alguna ocasión te paras en una flecha equivocada, no puedes pararte sobre la correcta, mueves más de un pie en un movimiento o mueves un pie cuando ya estabas parado en la flecha correcta, entonces todos los \stylePoints\ que habías acumulado te son quitados y pierdes el juego.
+    
+    ¿Cómo deberías mover los pies con tal de maximizar el número total de \stylePoints\ que puedes conseguir? Para los propósitos de este problema, supón que tu pie izquierdo empieza en la flecha izquierda ($\leftarrow$) y el derecho en la flecha derecha ($\rightarrow$) de la plataforma, además de que ya haz memorizado la secuencia entera de flechas de la canción.
+    
+    \begin{enumerate}[label=\alph*)]
+        \item Demuestra que para cualquier secuencia de $n$ flechas es posible ganar al menos $\frac{n}{4} - 1$ \stylePoints .
+        
+        \item Describe un algoritmo eficiente para encontrar el máximo número de \stylePoints\ que se pueden conseguir durante una rutina dada de VVR. La entrada de tu algoritmo será un arreglo $Arrow[1...n]$ que contiene la secuencia de flechas.
+    \end{enumerate}
+    
+    \item Una empresa está planeando una fiesta para sus empleador. Los organizadores de la fiesta quieren que sea una fiesta divertida, por lo que han asignado una calificación de "diversión" a cada empleado. Los empleados están organizados en una estricta jerarquía, es decir, un árbol enraizado en el presidente. Sin embargo, hay una restricción en la lista de invitados a la fiesta: tanto un empleado como su supervisor inmediato (padre en el árbol) no pueden asistir a la fiesta (por que eso no sería divertido). Diseñe un algoritmo de tiempo lineal que haga una lista de invitados para la fiesta y que maximice la suma de las calificaciones de "diversión" de los invitados.
+    
+    \item Pepito está subiendo una escalera con $n$ escalones y puede subir uno, dos o tres escalones a la vez. Diseña un algoritmo de programación dinámica para contar de cuántas formas posibles puede subir Pepito.
+    
+    \item Suponga que es el encargado de coordinar los servicios de tutoría de su facultad. Cada día se tienen solicitudes de lecciones extra. Las lecciones inician entre las 9:00 y 17:00 hrs. y duran exactamente 30 minutos. Suponga que tiene un número ilimitado de tutores que pueden iniciar a cualquier hora del día, pero deben dejar de dar clases durante el día como máximo dos horas después de comenzar. Diseña un algoritmo que calcule al mínimo número de tutores necesarios para cubrir todas las lecciones.
+    
+    \item Encuentre la parentización óptima para multiplicar seis matrices de dimensiones $4\times9$, $9\times4$, $4\times10$, $10\times2$, $2\times5$, $5\times6$.
+    
+    \item Un algoritmo glotón (\textit{greedy}) para regresar el cambio de $n$ unidades usando el mínimo número de monedas es el siguiente: Dar al cliente una moneda de mayor denominación, digamos $d$. Repite lo anterior para regresar el cambio de $n - d$ unidades.
+    
+    Repite Para cada una de las siguientes denominaciones, determina si el algoritmo greedy antes mencionado minimiza el número de monedas para dar el cambio. Si es así pruébalo, y si no lo es muestra un contraejemplo.
+    
+    \begin{enumerate}[label=\alph*)]
+        \item Monedas de Estados Unidos, 50, 25, 10, 5 y 1 centavos.
+        
+        \item Monedas inglesas antes de la decimalización, 30, 24, 12, 6, 3, 1, $\frac{1}{2}$ y $\frac{1}{4}$ peniques.
+        
+        \item Monedas portuguesas, 1, 2.5, 5, 10, 20, 25 y 50 escudos.
+        
+        \item Monedas marcianas, 1, $p$, $p^2$, ..., $p^k$, con $p > 1$ y $k \geq 0$.
+    \end{enumerate}
+    
+    \item Considera que un río fluye de norte a sur con caudal constante. Suponga que hay $n$ ciudades en ambos lados del río, es decir $n$ ciudades a la izquierda del río y $n$ ciudades a la derecha. Suponga también que dichas ciudades fueron numeradas de 1 a $n$, pero no están ordenadas. Construye el mayor número de puentes entre ciudades con el mismo número, tal que dos puentes no se intersecten.
+  \end{enumerate}
+\end{document}
