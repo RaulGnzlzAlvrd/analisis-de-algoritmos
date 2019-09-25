@@ -26,7 +26,7 @@
   frame=tb,
   backgroundcolor=\color{gray!10},
   inputencoding=utf8,
-  literate={ñ}{{\~n}}1 {í}{{\'i}}1,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1,
 }
 \renewcommand{\lstlistingname}{Algoritmo}
 
@@ -45,9 +45,13 @@
 \rfoot{\small\thepage}
 \headsep 1cm
 
+\newcommand\respuesta{\textbf{\textit{Respuesta:}}}
+
 \begin{document}
   \begin{enumerate}[leftmargin=*]
     \item Imagina que está un robot en la esquina superior izquierda de una malla de tamaño $X \times Y$. El robot solo puede moverse en dos direcciones: a la derecha y abajo. Si el robot debe moverse sobre la malla de la posición $(0,0)$ a la posición $(X,Y)$, \textbf{¿cuántos posibles caminos existen para mover al robot?} Imagina que ciertas celdas de la malla $(i,j)$ están bloqueadas, por lo que el robot no se puede para sobre ellas. \textbf{Diseña un algoritmo} de tiempo $O(XY)$ para encontrar el camino, si es que existe, que el robot debe seguir para llegar a la celda más abajo a la derecha.
+    
+    \respuesta
     \begin{enumerate}[label=\roman*)]
       \item \textbf{Posibles caminos:} En el caso en que la malla no tenga ningún obstáculo, el robot tiene que realizar $X$ movimientos a la derecha y $Y$ movimientos hacia abajo, independientemente de la ruta que tome. Con esto obtenemos una permutación con repeticiones de $X$ veces 'derecha' y $Y$ veces 'abajo'. Por lo tanto la cantidad de posibles caminos sin obstáculos es igual a:
       \[
@@ -56,15 +60,17 @@
       
       \item \textbf{Algoritmo para encontrar el camino:} El algoritmo consiste en ir recorriendo una matriz de tamaño $X*Y$, en la que en cada entrada de la matriz se va a representar una casilla de nuestro tablero y se va a ir guardando en cada casilla si es posible llegar a ella, además en caso de que sí, se almacenará desde donde se llegó (desde arriba o desde la izquierda) a dicha casilla. Una vez que se llena cada una de las casillas se recorre desde la casilla en la posición $(X,Y)$ siguiendo el camino en reversa que indica desde donde se llegó a esa casilla.
       
-      \begin{lstlisting}[caption=Encontrar camino en matríz de $X\times Y$]
+      \begin{lstlisting}[caption=Encontrar camino en matriz de $X\times Y$]
   EncuentraCamino (X, Y) do
-    malla = [X*Y] // matríz de tamaño X * Y
+    malla = [X*Y] // matriz de tamaño X * Y
     for i=0 to X do
       for j=0 to Y do
         arriba = malla[i-1, j]
         izquierda = malla[i, j-1]
         // si es posible llegar a la casilla arriba
-        if arriba['posible'] then
+        if (i,j) hay objeto then
+          malla[i, j] = ['posible': false, 'flecha': null]
+        else if arriba['posible'] then
           malla[i, j] = ['posible': true, 'flecha': 'arriba']
         else if izquierda['posible'] then
           malla[i,j] = ['posible': true, 'flecha': 'izquierda']
@@ -108,14 +114,138 @@
         \item Describe un algoritmo eficiente para encontrar el máximo número de \stylePoints\ que se pueden conseguir durante una rutina dada de VVR. La entrada de tu algoritmo será un arreglo $Arrow[1...n]$ que contiene la secuencia de flechas.
     \end{enumerate}
     
-    \item Una empresa está planeando una fiesta para sus empleador. Los organizadores de la fiesta quieren que sea una fiesta divertida, por lo que han asignado una calificación de "diversión" a cada empleado. Los empleados están organizados en una estricta jerarquía, es decir, un árbol enraizado en el presidente. Sin embargo, hay una restricción en la lista de invitados a la fiesta: tanto un empleado como su supervisor inmediato (padre en el árbol) no pueden asistir a la fiesta (por que eso no sería divertido). Diseñe un algoritmo de tiempo lineal que haga una lista de invitados para la fiesta y que maximice la suma de las calificaciones de "diversión" de los invitados.
+    \item Una empresa está planeando una fiesta para sus empleados. Los organizadores de la fiesta quieren que sea una fiesta divertida, por lo que han asignado una calificación de 'diversión' a cada empleado. Los empleados están organizados en una estricta jerarquía, es decir, un árbol enraizado en el presidente. Sin embargo, hay una restricción en la lista de invitados a la fiesta: tanto un empleado como su supervisor inmediato (padre en el árbol) no pueden asistir a la fiesta (por que eso no sería divertido). Diseñe un algoritmo de tiempo lineal que haga una lista de invitados para la fiesta y que maximice la suma de las calificaciones de 'diversión' de los invitados.
+    
+    \respuesta\ Se va a ver la organización de los empleados como un árbol en la que en cada nodo está la 'diversión' de cada empleado, y el padre de cada nodo será el jefe directo del empleado al que representa dicho nodo, el nodo raíz es el presidente.
+    
+    El algoritmo sería el siguiente: Para cada nodo $n$ además de su 'diversión', se va a tener una tupla con la máxima diversión que se puede obtener en el sub-árbol que tiene como raíz a $n$, en la primera entrada de la tupla va a estar la máxima diversión si $n$ va a la fiesta y en la segunda si no va. A dicha tupla la llamaremos maxDiversión.
+
+    Como caso base tendremos que si un nodo $h$ es una hoja, entonces su tupla maxDiversión será [$div$, 0] donde $div$ va a ser la diversión de $h$ y por que no tiene hijos (para maximizar la diversión del subárbol que es una hoja $h$, entonces $h$ debe estar en la lista de invitados).
+
+    Si un nodo $n$ no es hoja, entonces se va a llenar su tupla de la siguiente manera: para la primera entrada se va a sumar su diversión con la maxDiversión de sus nietos (este es el caso cuando $n$ está incluido en la lista de invitados y la máxima diversión de los nietos se obtiene de la segunda entrada de la tupla $maxDiverion$ de los hijos de $n$) y quedaría:
+    
+    \[
+      n.maxDiversion[1] = n.diversion + \sum_{hijo\in n.hijos}hijo.maxDiversion[2]
+    \]
+    
+    La segunda entrada de la $maxDiversion$ de $n$ se va a llenar con la suma del máximo entre el elemento 1 de la tupla $maxDiversion$ de cada hijo y de el elemento 2 de la misma tupla (aquí estamos considerando el caso en que $n$ no asiste a la fiesta):
+    
+    \[
+      n.maxDiversion[2] = \sum_{hijo\in n.hijos}max(hijo.maxDiverision[1], hijo.maxDiversion[2])
+    \]
+
+    Para llenar todas las tuplas de cada nodo del árbol se va a recorrer en post-orden para así llenar primero las tuplas de los hijos de un nodo y luego la tupla del nodo.
+
+    Una vez obtenidas todas las tuplas se va a recorre de nuevo el árbol posicionándonos en la raíz para crear la lista de invitados. Si el nodo $n$ en el que estamos tiene una tupla tal que su entrada 1 es mayor a la 2 (es decir que su máxima diversión sea si $n$ va a la fiesta), entonces añadimos a $n$ a la lista de invitados y repetimos con todos los nietos. En caso de que la entrada 2 sea mayor que la 1 (su máxima diversión es si no va $n$) entonces no agregamos nada a la lista y repetimos con los hijos de $n$. 
+
+    Para obtener las tuplas de todos los nodos nos toma tiempo lineal ya que solo se está recorriendo todo el árbol 1 vez. Y para obtener la lista de invitados se vuelve a recorrer el árbol. Con lo que obtenemos una complejidad de $O(n)$, con $n$ el número de nodos del árbol (empleados en la empresa).
     
     \item Pepito está subiendo una escalera con $n$ escalones y puede subir uno, dos o tres escalones a la vez. Diseña un algoritmo de programación dinámica para contar de cuántas formas posibles puede subir Pepito.
     
+    \respuesta\ En este problema como casos base tenemos que si Pepito tiene que subir 1 escalón, entonces hay una sola forma (1 salto de un escalón), para subir 2 tiene dos formas (1 salto de 1 seguido de otro salto de 1, y 1 salto de 2 escalones), para 3 escalones tiene 4 formas (3 saltos de 1 escalón cada uno, 1 salto de 1 seguido de 1 salto de 2, 1 salto de 2 seguido de 1 salto de 1 y por último un salto de 3 escalones).
+
+    En el caso de $n$ escalones tiene $formas(n-1) + formas(n-2) + formas(n-3)$ formas de subir.
+
+    De implementar una función recursiva tendríamos que se calcula muchas veces el mismo resultado (como pasa con la definición recursiva de Fibonacci), por lo tanto optaremos una solución que utiliza recursión de cola, en la que iremos guardando en los parámetros los últimos 3 resultados de subir $n-1$, $n-2$ y $n-3$ escalones.
+
+    \begin{lstlisting}[caption=Recursión de cola en escalones.]
+  formas(n) do:
+    formas-tail(n, 1, 2, 4)
+  endFormas
+
+  formas-tail (n, uno, dos, tres) do:
+    switch n:
+      case 1:  
+        return uno
+      case 2:
+        return dos
+      case 3:
+        return tres
+      default:
+        return formas-tail((n - 1), dos, tres, (uno + dos + tres))
+  endFormasTail
+    \end{lstlisting}
+
+    El tiempo que toma ejecutar la función es lineal y el espacio que ocupa en memoria es constante ya que guarda todo el tiempo solo 3 variables.
+
     \item Suponga que es el encargado de coordinar los servicios de tutoría de su facultad. Cada día se tienen solicitudes de lecciones extra. Las lecciones inician entre las 9:00 y 17:00 hrs. y duran exactamente 30 minutos. Suponga que tiene un número ilimitado de tutores que pueden iniciar a cualquier hora del día, pero deben dejar de dar clases durante el día como máximo dos horas después de comenzar. Diseña un algoritmo que calcule al mínimo número de tutores necesarios para cubrir todas las lecciones.
     
-    \item Encuentre la parentización óptima para multiplicar seis matrices de dimensiones $4\times9$, $9\times4$, $4\times10$, $10\times2$, $2\times5$, $5\times6$.
+    \respuesta\ Se va a crear un arreglo con 16 entradas las cuales van a representar la cantidad de alumnos que piden tutoría en una hora en específico. Se van a guardar por cada media hora, por ejemplo: en la primera casilla se va a guardar la cantidad de alumnos que pidan tutoría de 9:00 a 9:30, en la segunda de 9:30 a 10:00, y en la última de 16:30 a 17:00 hrs.
     
+    El algoritmo va a llevar un contador llamado $tutores$ donde se va almacenar la cantidad de tutores que se irán necesitando. Vamos a ir iterando el arreglo desde la primera entrada, si el número en esa entrada es distinto de 0, digamos $x$ entonces actualizamos nuestro contador tutores de la siguiente manera: $tutores += x$ y restamos $x$ a las siguientes 3 entradas de nuestro arreglo y a la entrada actual la actualizamos a 0.
+
+    Una vez terminada la iteración sobre el arreglo regresamos $tutores$ como la cantidad de tutores que necesitaremos para dicho día.
+
+    El algoritmo es correcto por que calcula el mínimo número de tutores para la primera entrada del algoritmo y resta esos tutores a las siguientes 33 entradas, así se asegura de que los tutores cubran el máximo número de tutorías posibles. Y al iterar sobre el arreglo nos asegura que siempre vamos a resolver un caso como el anterior.
+    
+    \item Encuentre la parentización óptima para multiplicar seis matrices de dimensiones $4\times9$, $9\times4$, $4\times10$, $10\times2$, $2\times5$, $5\times6$.
+
+    \respuesta\ Se va a utilizar el algoritmo visto en clase:
+
+    Vamos a renombrar nuestras matrices de la siguiente forma:
+    \[ A_1 = 4 \times 9 \]
+    \[ A_2 = 9 \times 4 \]
+    \[ A_3 = 4 \times 10 \]
+    \[ A_4 = 10 \times 2 \]
+    \[ A_5 = 2 \times 5 \]
+    \[ A_6 = 5 \times 6 \]
+
+    Luego vamos a calcular la cantidad de operaciones de multiplicar las matrices dos a dos:
+    
+    \[ A_1A_2 = 4 * 9 * 4 = 64 \qquad dim = 4 \times 4 \]
+    \[ A_2A_3 = 9 * 4 * 10 = 360 \qquad dim = 9 \times 10 \]
+    \[ A_3A_4 = 4 * 10 * 2 = 80 \qquad dim = 4 \times 2 \]
+    \[ A_4A_5 = 10 * 2 * 5 = 100 \qquad dim = 10 \times 5 \]
+    \[ A_5A_6 = 2 * 5 * 6 = 60 \qquad dim = 2 \times 6 \]
+
+    Ahora las posibles combinaciones de 3 en tres (subrayamos los casos que son mejores, estos se utilizarán para hacer las cuentas más adelante):
+
+    \[ A_1(A_2A_3) = 4 * 9 * 10 + 360 = 424 \qquad dim = 4 \times 10 \]
+    \[ \underline{(A_1A_2)A_3 = 4 * 4 * 10 + 64 = 224 \qquad dim = 4 \times 10} \]
+    \[ \underline{A_2(A_3A_4) = 9 * 4 * 2 + 80 = 152 \qquad dim = 9 \times 2} \]
+    \[ (A_2A_3)A_4 = 9 * 10 * 2 + 360 = 540 \qquad dim = 9 \times 2 \]
+    \[ A_3(A_4A_5) = 4 * 10 * 5 + 100 = 300 \qquad dim = 4 \times 5 \]
+    \[ \underline{(A_3A_4)A_5 = 4 * 2 * 5 + 80 = 120 \qquad dim = 4 \times 5} \]
+    \[ \underline{A_4(A_5A_6) = 10 * 2 * 6 + 60 = 180 \qquad dim = 10 \times 6} \]
+    \[ (A_4A_5)A_6 = 10 * 5 * 6 + 100 = 400 \qquad dim = 10 \times 6 \]
+    
+    Seguimos ahora con las opciones de 4 en 4:
+
+    \[ A_1(A_2A_3A_4) = 4*9*2+152 = 224 \qquad dim = 4\times2 \]
+    \[ \underline{(A_1A_2)(A_3A_4) = 4*4*2+64+80 = 176 \qquad dim = 4\times2} \]
+    \[ (A_1A_2A_3)A_4 = 4*10*2+224 = 304 \qquad dim = 4\times2 \]
+    %% -- %%
+    \[ A_2(A_3A_4A_5) = 9*4*5+120 = 300 \qquad dim = 9\times5 \]
+    \[ (A_2A_3)(A_4A_5) = 9*10*5+360+100 = 910 \qquad dim = 9\times5 \]
+    \[ \underline{(A_2A_3A_4)A_5 = 9*2*5+152 = 242 \qquad dim = 9\times5} \]
+    %% -- %%
+    \[ A_3(A_4A_5A_6) = 4*10*6+180 = 420 \qquad dim = 4\times6 \]
+    \[ \underline{(A_3A_4)(A_5A_6) = 4*2*6+80+60 = 188 \qquad dim = 4\times6} \]
+    \[ (A_3A_4A_5)A_6 = 4*5*6+120 = 240 \qquad dim = 4\times6 \]
+
+    Ahora de 5 en 5:
+
+    \[ A_1(A_2A_3A_4A_5) = 4*9*5+242 = 422 \qquad dim = 4\times5 \]    
+    \[ (A_1A_2)(A_3A_4A_5) = 4*4*5+64+120 = 264 \qquad dim = 4\times5 \]  
+    \[ (A_1A_2A_3)(A_4A_5) = 4*10*5+224+100 = 524 \qquad dim = 4\times5 \]  
+    \[ \underline{(A_1A_2A_3A_4)A_5 = 4*2*5+176 = 216 \qquad dim = 4\times5} \]  
+    %% -- %%
+    \[ A_2(A_3A_4A_5A_6) = 9*4*6+188 = 404 \qquad dim = 9\times6 \]    
+    \[ (A_2A_3)(A_4A_5A_6) = 9*10*6+360+180 = 1080 \qquad dim = 9\times6 \]    
+    \[ \underline{(A_2A_3A_4)(A_5A_6) = 9*2*6+152+60 = 320 \qquad dim = 9\times6} \]    
+    \[ (A_2A_3A_4A_5)A_6 = 9*5*6+242 = 512 \qquad dim = 9\times6 \]    
+
+    Por último consideramos las posibilidades del caso de 6, que es nuestro caso buscado:
+
+    \[ A_1(A_2A_3A_4A_5A_6) = 4*9*6+320 = 536 \qquad dim = 4\times6 \]
+    \[ (A_1A_2)(A_3A_4A_5A_6) = 4*4*6+64+188 = 348 \qquad dim = 4\times6 \]
+    \[ (A_1A_2A_3)(A_4A_5A_6) = 4*10*6+224+180 = 644 \qquad dim = 4\times6 \]
+    \[ \underline{(A_1A_2A_3A_4)(A_5A_6) = 4*2*6+176+60 = 284 \qquad dim = 4\times6} \]
+    \[ (A_1A_2A_3A_4A_5)A_6 = 4*5*6+216 = 336 \qquad dim = 4\times6 \]
+
+    Así obtenemos la siguiente parentización óptima que tiene un total de 284 operaciones:
+    \[ ((A_1A_2)(A_3A_4))(A_5A_6) \]
+
     \item Un algoritmo glotón (\textit{greedy}) para regresar el cambio de $n$ unidades usando el mínimo número de monedas es el siguiente: Dar al cliente una moneda de mayor denominación, digamos $d$. Repite lo anterior para regresar el cambio de $n - d$ unidades.
     
     Repite Para cada una de las siguientes denominaciones, determina si el algoritmo greedy antes mencionado minimiza el número de monedas para dar el cambio. Si es así pruébalo, y si no lo es muestra un contraejemplo.
@@ -131,5 +261,33 @@
     \end{enumerate}
     
     \item Considera que un río fluye de norte a sur con caudal constante. Suponga que hay $n$ ciudades en ambos lados del río, es decir $n$ ciudades a la izquierda del río y $n$ ciudades a la derecha. Suponga también que dichas ciudades fueron numeradas de 1 a $n$, pero no están ordenadas. Construye el mayor número de puentes entre ciudades con el mismo número, tal que dos puentes no se intersecten.
+
+    \respuesta\ Al estar en desorden ambas (una para cada lado del río) numeraciones de ciudades entonces podemos ver a nuestro problema como encontrar la mayor subsecuencia común entre dos cadenas de caracteres, pero en nuestro caso va a ser de números naturales.
+
+    Vamos a utilizar una ma
+
+    Teniendo dos cadenas iniciales $C_1$ y $C_2$, el algoritmo consiste en ir llenando nuestra matriz de $n \times n$, con $n$ la longitud de $C_1$ y $C_2$, en la que se va a ir guardando en cada casilla $(i,j)$ un $score$ que va a representar el tamaño de la máxima subsecuencia común de las subcadenas $c_1$ (subsecuencia de 0 a $i$ de $C_1$) y $c_2$ (subsecuencia de 0 a $j$ de $C_2$).
+
+    Este $score$ se va a calcular de la siguiente manera: 
+
+    Llamaremos $A$ al score que hay en la casilla $(i, j-1)$ y $B$ al score de la casilla $(i-1,j)$ y $C$ al score de la casilla $(i-1, j-1)$ (es decir al score de la diagonal superior izquierda de $(i,j)$).
+
+    Tendremos los siguientes casos:
+
+    \begin{enumerate}[label=\alph*)]
+      \item Si $C_1[i] == C_2[j]$ entonces $score(i,j) = C + 1$ y guardamos una flecha junto al score haciendo referencia a la casilla $C$.
+
+      \item Si $C_1[i] \neq C_2[j]$ y $A \geq B$ entonces $score(i,j) = B$ y guardamos una flecha junto al score haciendo referencia a la casilla $B$.
+
+      \item Si $C_1[i] \neq C_2[j]$ y $A < B$ entonces $score(i,j) = A$ y guardamos una flecha junto al score haciendo referencia a la casilla $A$.
+    \end{enumerate}
+
+    Cabe destacar que también estamos guardando una flecha para saber desde donde se calculó el valor de la casilla $(i,j)$, este valor se ocupará más adelante.
+
+    Una vez llenadas todas las casillas de nuestra matriz con su correspondiente $score$ y $flecha$, nos vamos a posicionar en la casilla inferior derecha (que va a tener en $score$ el valor máximo de la subsecuencia mayor común de $C_1$ y $C_2$) y desde ahí vamos a ir 'retrocediendo' para encontrar los elementos que conforman a la subsecuencia común mas larga.
+
+    Si estamos en la casilla $(i,j)$ y la flecha hace referencia a la casilla superior izquierda, entonces añadimos $C_1[i]$ al principio de una lista, digamos $L$. Si la flecha indica hacia la izquierda o hacia arriba entonces nos movemos a la casilla indicada y repetimos este proceso hasta llegar a la casilla (0,0).
+
+    Una vez terminado tendremos en $L$ la subsecuencia común más larga que serán las ciudades entre las que se va a construir un puente.  
   \end{enumerate}
 \end{document}
