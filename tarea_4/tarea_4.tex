@@ -46,6 +46,7 @@
 \headsep 1cm
 
 \newcommand\respuesta{\textbf{\textit{Respuesta: }}}
+\newcommand{\af}{\textit{Afirmación }}
 
 \begin{document}
   \begin{enumerate}[leftmargin=*]
@@ -169,5 +170,121 @@
     Así que obtendríamos el tamaño mínimo de el ciclo de peso negativo de longitud mínima.
 
     La complejidad de este algoritmo se mantine $O(n^3)$ pero podría detenerse antes por la condición de la casilla diagonal negativa, así si la $k$ es más chica podríamos decir que es $O(k*n^2)$.
+
+    \item Diseña un algoritmo de tiempo $O(V+E)$ que determine si una gráfica dirigida $G = (V,E)$ contine o no un ciclo.
+    
+    \respuesta Vamos a utilizar un algoritmo que recorra nuestra gráfica de forma similar a el del ejercicio 2.
+    En lo que va a cambiar es que se va a utilizar una variable extra que será un "color", con el cuál vamos a marcar el nodo cuando ya hayamos pasado por el.
+    Se van a utilizar dos colores $color_A$ y $color_B$.
+    También vamos a suponer que la lista $vecinos$ de cada nodo $u$ contendrá los nodos $v$ tal que existe la arista dirigida que va de $u$ a $v$ i.e. $(u,v) \in E$. 
+    Además la pila $padre$ que utilizamos antes ahora va a ser una sola variable.
+
+    \begin{enumerate}[label=\roman*)]
+      \item Inicialmente vamos a tomar un nodo cualquiera, digamos $r$ y empieza siendo el nodo actual.
+    
+      \item Para el nodo actual $u$ vamos a verificar si su lista $vecinos$ es igual a su lista $\operatorname{vecinos-explorados}$, en caso de que sí:
+      
+      Primero le asignaremos a $u$ el $color_B$ y luego revisaremos los dos casos siguientes:
+      \begin{enumerate}[label=\alph*)]
+        \item Si $padre$ no está definido (es $null$), entonces termina el algoritmo y reportamos que no hubo ciclo. 
+        \item Si no es vacía, entonces nuestro nodo actual va a ser el $padre$ de $u$.
+      \end{enumerate}
+
+      En caso de que aún $vecinos$ sea distinto a $\operatorname{vecinos-explorados}$ vamos a seleccionar un nodo de $vecinos$ que no esté en $\operatorname{vecinos-explorados}$, digamos $s$, metemos a $s$ en $\operatorname{vecinos-explorados}$ y comprobamos los siguientes casos:
+      \begin{enumerate}[label=\alph*)]
+        \item Si $s$ tiene el color $color_A$, entonces terminamos el algoritmo y reportamos un ciclo.
+        \item Si $s$ tiene el color $color_B$, entonces nodo actual sigue siendo $u$ y repetimos el paso II).
+        \item Si $s$ no tiene ningún color, entonces hacemos a $s$ el nodo actual, a la variable $padre$ de $s$ le asignamos $u$, le asignamos a $s$ el $color_A$ y repetimos el paso II).
+      \end{enumerate} 
+    \end{enumerate}
+
+    Una suposición adicional es que si se termina el algoritmo (entra en la condición \textit{b)} del inciso \textit{II)}) entonces nos situaremos en un nodo que aún no tenga color asignado y repetiremos el algoritmo hasta que no queden nodos sin colorear
+    Una vez que se hayan coloreado todos los nodos y no se haya reportado un ciclo entonces decimos que no hay ciclos.
+    
+    Para mostrar que es correcto veremos las siguientes afirmaciones sobre un nodo:
+
+    \af 1. No tiene color si no lo hemos explorado. 
+    Esto pasa por que los nodos empiezan con su variable color en null, y no se les asigna un color hasta que se llega a ellos. 
+    Concluimos que entonces no han sido descubiertos.
+    
+    \af 2. Tiene el $color_B$ si ya fueron explorados todos sus vecinos y tienen el $color_B$. 
+    Esto pasa por el inciso \textit{II)} al momento de revisar la lista de vecinos y explorados.
+    Además no se le cambia el color a el $color_B$ en ninguna otra ocasión.
+
+    \af 3. Tiene el $color_A$ cuando aún tiene vecinos que están siendo explorados o si tiene vecinos aún sin explorar. 
+    Esto pasa por la afirmación 1 y 2, no se le asigna el $color_A$ hasta que es explorado por primera vez, y no se le asigna el $color_B$ hasta que todos sus vecinos fueron explorados.
+    Además no se le asigna el $color_A$ en ninguna otra ocasión.
+
+    Así que, por la condición: "Si $s$ tiene el color $color_A$, entonces terminamos el algoritmo y reportamos un ciclo", sabemos que el $padre$ de $s$ aún tiene el $color_A$ (por que $s$ aún está siendo explorado).
+    Y entonces si $s$ ya tenía el $color_A$ sabemos que llegamos desde un nodo que tiene vecinos que están siendo explorados hasta él mismo (en este caso $s$), lo cuál forma un ciclo y lo podemos reportar.
+
+    La complejidad de este algoritmo es la misma que el del ejercicio 2, por que no altera el comportamiento solo aumenta en una variable la memoria utilizada.
+    Aún que cabe destacar que puede terminar antes.
+    Pero sigue siendo $O(E)$.
+
+    \item Supongamos que tenemos un conjunto de $n$ ciudades $c_1, c_2,...,c_n$, y una tabla $D[1,...,n][1,...,n]$ tal que $D[i,j]$ es la longitud de una carretera que une a la ciudadad $c_i$ con la ciudad $c_j$ (este valor puede ser $\infty$ si no hay carreterra entre $c_i$ y $c_j$).
+    Encuentre un algoritmo eficiente que encuentre la ruta más corta entre las ciudades $c_1$ y $c_n$ tal que dicha ruta no pasa por más de $k$ ciudades distintas (a $c_1$ y $c_n$).
+
+    \respuesta Nuevamente vamos a utilizar \textbf{Floyd-Warshall}, pero esta vez deteniendo nuestro algoritmo en la $k$-ésima iteración (esto para obtener los caminos de a lo más longitud $k$).
+    
+    Sabemos que \textbf{Floyd-Warshall} encuentra (en cada iteración $k$) el camino más corto entre dos nodos que utiliza a lo más $k$ nodos intermedios, con lo cuál ya tendríamos el tamaño de la ruta entre nuestras dos ciudades $c_1$ y $c_n$.
+    Y la complejidad de este algoritmo sería nuevamente $O(k * n^2)$ con $n = |V|$ por que se detine en la $k$-ésima iteración.
+    
+    \item Sea G una gráfica cuyas aristas tienen asignados pesos positivos.
+    Sea T un árbol generador de peso mínimo de G.
+    Pruebe que si existen aristas $e \in T$ y $e' \notin T$ tales que $(T - e) \cup {e'}$ forman un árbol de mayor pero o igual que T, pero menor o igual a cualquier otro árbol generador de G, i.e. un segundo árbol generador de peso mínimo.
+
+    \respuesta Para este problema vamos a dar un algoritmo que encuentre dichas aristas ($e$ y $e'$).
+    Llamaremos $T'$ al árbol que estamos buscando (i.e. el segundo árbol generador de peso mínimo).
+
+    Antes vamos a considerar los siguientes casos para las aristas $e$ y $e'$:
+    \begin{enumerate}
+      \item Si $(T - e) \cup {e'}$ forma un ciclo (o nos deja la gráfica inconexa) entonces esa $e'$ no es la que estamos buscando.
+      \item Si $(T - e) \cup {e'}$ no forma un ciclo, analicemos los siguientes dos casos:
+      \begin{enumerate}
+        \item $peso(e') < peso(e)$: Esto es un caso imposible, por que si pasa significa que tenemos un árbol que tiene un peso menor al de $T$, por lo tanto $T$ n sería el de peso mínimo.
+        \item $peso(e') \geq peso(e)$: En este caso tenemos que $(T - e) \cup {e'}$ sí es un árbol generador posible y que su peso es mayor o igual al peso de $T$.  
+      \end{enumerate}
+    \end{enumerate} 
+
+    Entonces, por el último caso, para encontrar a $T'$ tenemos que encontrar a $e$ y $e'$ que acerquen lo más posible el peso de $T'$ al de $T$.
+    Esto se logra haciendo que la diferencia entre $e$ y $e'$ sea la menor posible.
+
+    Para lograr eso vamos a utilizar el siguiente algoritmo:
+
+    Vamos a utilizar una variable $diferencia$ (inicializada en $\infty$) en la que iremos guardando la menor diferencia entre $e$ y $e'$, una variable $arista'$ en la que iremos guardando la arista $e'$ y otra $arista$ donde guardaremos $e$.
+
+    Iteramos por cada arista $e \in T$ y por cada una también iteramos por cada arista $e' \notin T$ y hacemos lo siguiente:
+
+    \begin{enumerate}
+      \item Si $peso(e') - peso(e) < diferencia$ entonces buscamos si $(T - e) \cup {e'}$ forma un ciclo.
+      \begin{enumerate}
+        \item En caso de que lo forme entonces no hacemos nada y continuamos la iteración.
+        \item En caso contrario asignamos a $diferencia = peso(e') - peso(e)$ y a $arista = e$ y en $arista' = e'$.
+      \end{enumerate}
+      \item Si $peso(e') - peso(e) \geq diferencia$ no hacemos nada y continuamos la iteración.
+    \end{enumerate}
+
+    Una vez terminadas las iteraciones tenemos en $arista'$ la $e'$ y en $arista$ a $e$.
+
+    Cabe destacar que en el caso particular en que $G$ sea un árbol, su árbol generador de peso mínimo sería él mismo, de este modo no podemos encontrar ninguna arista $e' \notin T$, por lo tanto no podemos probar la existencia de $e'$ y por lo tanto es un caso en el que no se cumple.
+
+    Para justificar las aristas $e$ y $e'$ que nos da nuestro algoritmos son tales que $(T - e) \cup {e'} = T'$ es el segundo árbol generador de peso mínimo vamos a primero ver que $peso(T') \geq peso(T)$.
+
+    Como ya mencionamos en el analisis de los casos, no es posible que $peso(e') < peso(e)$ así que siempre escojemos una $e'$ tal que $peso(e') \geq peso(e)$.
+    Ahora para ver que $peso(T') > peso(T)$: 
+
+    \begin{equation*}
+      peso(T') = peso(T) - peso(e) + peso(e')
+    \end{equation*}
+
+    Y como $peso(e') < peso(e)$ entonces $peso(e) - peso(e') \geq 0$. Tenemos que:
+
+    \begin{equation*}
+      peso(T') \geq peso(T)
+    \end{equation*}
+
+    Ahora para mostrar que $peso(T')$ es menos o igual a cualquier otro árbol generador (exceptuando $T$), basta con ver el inciso \textit{a)} de nuestro algoritmo, que ya nos da el mínimo $e'$ tal que $peso(e) - peso(e')$ es el mínimo, además de mencionar que se prueban todas las combinaciones de aristas.
+    Por lo tanto minimizamos la diferencia de nuestras aristas $e$ y $e'$ y tampoco formamos ciclos (que es lo que queríamos en nuestro análisis).
   \end{enumerate}
 \end{document}
