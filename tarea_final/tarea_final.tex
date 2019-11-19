@@ -1,0 +1,240 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[top=1.5cm, bottom=4.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=blue,
+  linkbordercolor={0 0 1}
+}
+
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+\lstset{
+  frame=tb,
+  backgroundcolor=\color{gray!10},
+  inputencoding=utf8,
+  literate={ñ}{{\~n}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1,
+}
+\renewcommand{\lstlistingname}{Algoritmo}
+
+\newcommand\course{Análisis de Algoritmos}
+\newcommand\hwnumber{4}
+\newcommand\AStudentName{González Alvarado Raúl}
+\newcommand\AStudentID{313245312}
+
+\pagestyle{fancyplain}
+\headheight 35pt
+\lhead{\AStudentName\\\AStudentID}
+\rhead{\course \\ \today}
+\chead{\textbf{\Large Tarea \hwnumber}}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1cm
+
+\newcommand\respuesta{\textbf{\textit{Respuesta: }}}
+\newcommand{\af}{\textit{Afirmación }}
+
+\begin{document}
+  \begin{enumerate}[leftmargin=*]
+    \item Queremos ordenar una lista $S$ de $n$ enteros que contiene muchos elementos duplicados.
+    Supongamos que los elementos de $S$ sólo contienen $O(\log n)$ valores distintos.
+
+    \begin{enumerate}[label=\alph*)]
+        \item Encuentre un algoritmo que toma a lo más $O(n \log (\log n))$ tiempo para ordenar $S$.
+        
+        \respuesta
+        
+        \item ¿Por qué no viola la cota inferior de $O(n \log n)$ para el problema de ordenación.
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Supongamos que tenemos que ordenar una lista $L$ de $n$ enteros cuyos valores están entre $1$ y $m$.
+    Pruebe que si $m$ es $O(n)$ entonces los elementos de $L$ pueden ser ordenados en tiempo lineal.
+    ¿Qué pasa si $m$ es de $O(n^2)$? ¿Se puede realizar en tiempo lineal? ¿Por qué?
+
+    \begin{enumerate}[label=\alph*)]
+        \item $O(n)$
+        
+        \respuesta
+
+        \item $O(n^2)$
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Pruebe que el segundo elemento más chico de una lista de $n$ elementos distintos puede encontrarse con $n + \lceil \log n \rceil - 2$ comparaciones.
+    
+    \respuesta
+
+    \item Supongamos que tenemos dos listas ordenadas $S$ y $T$, cada una con $n$ elementos.
+    
+    \begin{enumerate}[label=\alph*)]
+        \item Encuentre un algoritmo que en $\Theta (\log^2 n)$ encuentre el $n$-ésimo elemento de $S \cup T$ (no calcule $S \cup T$, esto toma $O(n)$).
+        
+        \respuesta
+
+        \item De una cota inferior sobre la complejidad de este problema, o encuentre un algoritmo más eficiente.
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Decimos que un arreglo $A[1...n]$ está $k$-ordenado si puede ser dividio en $k$ bloques, cada uno de tamaño $n / k$, tal que los elementos de cada bloque son más grandes que los elementos de de los bloques anteriores, y más pequeños que los elementos en bloques siguientes.
+    Los elementos dentro de cada bloque no necesitan estar ordenados.
+    
+    \begin{enumerate}[label=\alph*)]
+        \item Describe un algoritmo que $k$-ordene un arreglo cualquiera en tiempo $O(n \log k)$.
+        
+        \respuesta
+        
+        \item Prueba que cualquier algoritmo de $k$-ordenación basado en comparaciones requiere $\Omega (n \log k)$ comparaciones en el peor de los casos.
+        
+        \respuesta
+        
+        \item Describe un algoritmo que ordene completamente un arreglo que ya esté $k$-ordenado en tiempo $O(n \log (n /K))$.
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Diseña un algoritmo eficiente que tome un arreglo $A$ de $n$ enteros positivos y obtenga el número de parejas de indices invertidos, donde una pareja de indices $(i,j)$ son invertidos si $i < j$ y $A[i] > A[j]$.
+    
+    \respuesta
+
+    \item En clase se mostró un algoritmo para encontrar el $k$-ésimo elemento de un arreglo $S$, partiéndolo en grupos de tamaño 5.
+    De manera similar, encuentra el $k$-ésimo elemento de $S$ partiéndolo en grupos de 3 y 7.
+    ¿En ambos casos se conserva la linealidad del algoritmo? Explique.
+
+    \respuesta
+
+    \item Dados dos árboles generadores $T$ y $R$ de una gráfica $G = (V, E)$, mostrar como encontrar la secuencia más corta de árboles generadores $T_0, T_1, ..., T_k$ tal que $T_0 = T$, $T_k = R$ y cada árbol $T_i$ difiere del anterior $T_{i-1}$ en añadir un solo vértice y eliminar otro.
+    
+    \respuesta
+
+    \item Considera un tablero de ajedrez $B$ de tamaño $n \times n$ de cuadrados alternantes blancos y negros.
+    Y suponemos que $n$ es par.
+    Queremos cubrir todo el tablero con piezas rectangulares de dominó de tamaño $2 \times 1$.
+
+    \begin{enumerate}[label=\alph*)]
+        \item Muestra como cubrir el tablero con $\frac {n \times n} 2$ dominos.
+        
+        \respuesta
+
+        \item Remueve la casilal de arriba a la izquierda y la de abajo a la derecha de $B$.
+        Muestra que no se puede cubrir el tablero restante con $\frac {n \times n} 2 - 1$ dominós.
+
+        \respuesta
+
+        \item Remueve un cuadrado negro arbitrario y uno blanco de $B$.
+        Muestra que el resto del tablero puede ser cubierto con $\frac {n \times n} 2 - 1$ dominós.
+
+        \respuesta
+    \end{enumerate}
+
+    \item Dada una secuencia de $n$ valores $x_1, x_2, ..., x_n$ y queremos encontrar rápidamente respuesta a preguntas de la forma: dados  $i$ y $j$, encontrar el valor más pequeño entre $x_i, ... x_j$.
+    
+    \begin{enumerate}[label=\alph*)]
+        \item Diseña una estructura de datos que use espacio $O(n^2)$ y conteste a las preguntas en tiempo $O(n)$.
+        
+        \respuesta
+
+        \item Diseña una estructura de datos que use espacio $O(n)$ y conteste a las preguntas en tiempo $O(\log n)$.
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Un pescador está sobre un océano rectangular. El valor del pez en el punto $(i, j)$ está dado por un arreglo $A$ de dimensión 2 y tamaño $n \times m$.
+    Diseña un algoritmo que calcule el mácimo valor de pescado que un pescador puede atrapar en un camino desde la esquina superior izquierda a la esquina inferior derecha.
+    El pescador solo puede moverse hacia abajo o hacia la derecha.
+
+    \respuesta
+
+    \item El intervalo común más largo de dos sucesiones $X$ y $Y$, es un conjunto de elementos consecutivos de $X$ y $Y$ más largo que aparece en ambas sucesiones (no confundir con subsucesión común más larga).
+    Sean $n = |X|$ y $m = |Y|$. Encuentre un algorimo que en $\Theta (nm)$ encuentre el intervalo común más largo de $X$ y $Y$.
+
+    \respuesta
+
+    \item Sean tres cadenas de caracteres $X$, $Y$ y $Z$, con $|X| = n$, $|Y| = m$ y $|Z| = n + m$.
+    Diremos que $Z$ es un \textit{shuffle} de $X$ y $Y$ si $Z$ puede ser formado por caracteres intercalados de $X$ y $Y$ manteniendo el orden de izquierda a derecha de cada cadena.
+
+    \begin{enumerate}[label=\alph*)]
+        \item Muestra que \textit{cchocoholaptes} es un \textit{shuffle} de \textit{chocolate} y \textit{chips}, pero \textit{chocochilatspe} no lo es.
+        
+        \respuesta
+
+        \item Diseña un algoritmo de programación dinámica eficiente que determine si $Z$ es un \textit{shuffle} de $X$ y $Y$.
+        
+        \respuesta
+    \end{enumerate}
+
+    \item Supongamos que todos los vértices de una gráfica tienen peso distinto (es decir, ningun par de vértices tiene el mismo peso).
+    ¿El camino entre un par de vértices en un árbol generador de peso mínimo es necesariamente el camino más corto entre esos dos vértices en la gráfica original?
+    Dar una prueba o un contraejemplo.
+
+    \respuesta
+
+    \item Construya el arbol de Huffman para codificar el siguiente texto:
+    
+    \textit{El azote, hijo mío, se inventó para castigar afrontando al racional y para avivar la pereza del bruto que carece de razón; preo no para el niño decente y de vergüenza que sabe lo que le importa hacer y lo que nunca debe ejecutar, no amedrentado por el rigor del castigo, sino obligado por la persuación de la doctrina y el convencimiento de su propio interés.}
+
+    \respuesta
+
+    \item Mientras caminas por la playa encuentras un cofre de tesoros.
+    El cofre contiene $n$ tesoros con pesos $w_1, ..., w_n$ y valores $v_1, ..., v_n$.
+    Desafortunadamente sólo tienes una mochila que solo tiene capacidad de carga $M$.
+    Afortunadamente los tesoros se pueden rompeer si es necesario.
+    Por ejemplo, la tercera parte de un tesoro $i$ tiene peso $\frac {w_i} 3$ y valor $\frac {v_i} 3$.
+
+    \begin{enumerate}[label=\alph*)]
+        \item Describe un algoritmo voraz de tiempo $\Theta (n \log n)$ que resuelva este problema.
+        
+        \respuesta
+
+        \item Prueba que tu algoritmo obtiene la solución correcta.
+        
+        \respuesta
+
+        \item Mejora el tiempo de ejecución de tu algoritmo a $\Theta (n)$.
+        
+        \respuesta
+    \end{enumerate}
+    
+    \item Sea $S$ un conjunto de $n$ puntos en el plano en posición general, tales que $\forall {(x_i, y_i)} \in S$ se tiene que $x_i, y_i \in \mathbb{N}$ y $x_i, y_i \in [0, ..., n^2]$.
+    Describe un algorimo que encuentre el cierre convexo de $S$ en tiempo $O(n)$.
+
+    \respuesta
+
+    \item Un árbol generador mínimo Euclideano (EMST) de un conjunto $P$ de puntos en el plano es un árbol aristas de longitud mínima que conecta todos los puntos.
+    Los EMST son interesantes en aplicaciones donde queremos conectar sitios en un ambiente plano con lineas de comunicación, caminos, vias de tren, etc.
+
+    \begin{enumerate}[label=\alph*)]
+        \item Prueba que el conjunto de vértices de la triangulación de Delaunay de $P$ contiene un EMST para $P$.
+        
+        \respuesta
+
+        \item Usa el resultado anterior pra dar un algorimo $O (n \log n)$ para computar un EMST para $P$.
+        
+        \respuesta
+
+    \end{enumerate}
+
+    \item Sea $P$ un conjunto de $n$ puntos en el plano.
+    Muestra un algorimo de tiempo $O (n \log n)$ para encontrar para cada punto $p \in P$ el punto en $P$ más cercano a $p$. 
+    
+    \respuesta
+
+  \end{enumerate}
+\end{document}
